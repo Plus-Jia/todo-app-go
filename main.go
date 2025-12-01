@@ -9,8 +9,7 @@ import (
 	"github.com/Plus-Jia/todo-app-go/models"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"gorm.io/gorm"
 )
 
 // 定义一个用户结构体，用于数据库操作
@@ -22,21 +21,9 @@ type User_test struct {
 var db *gorm.DB
 var err error
 
-// 初始化数据库
-//
-//	func initDatabase() {
-//		// 打开数据库
-//		db, err = gorm.Open("sqlite3", "todo-app.db")
-//		if err != nil {
-//			fmt.Println("数据库连接失败：", err)
-//		}
-//		// 自动迁移（创建表）
-//		db.AutoMigrate(&User_test{})
-//	}
 func main() {
 	// 初始化数据库连接
 	models.InitDB()
-	defer models.DB.Close() // 程序退出时关闭连接
 
 	//创建 gin 路由
 	r := gin.Default()
@@ -51,6 +38,11 @@ func main() {
 	//功能路由，待完成---
 	r.POST("/register", controllers.Register)
 	r.POST("/login", controllers.Login)
+	// task路由
+	r.POST("/tasks", controllers.CreateTask)
+	r.GET("/tasks", controllers.GetTasks)
+	r.PUT("/tasks/:id", controllers.UpdateTask)
+	r.DELETE("/tasks/:id", controllers.DeleteTask)
 
 	// 中间件安全路由测试
 	r.GET("/protected", TokenAuthMiddleware(), func(c *gin.Context) {

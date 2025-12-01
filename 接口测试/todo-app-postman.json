@@ -1,0 +1,159 @@
+{
+  "info": {
+    "name": "Todo App Go API",
+    "_postman_id": "b9d2d7ea-75e9-4ff0-b66c-12c123456789",
+    "description": "Postman collection for Todo App built with Go + Gin + SQLite",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth - Register",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/register",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["register"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"123456\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Auth - Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["login"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"123456\"\n}"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Tasks - Create Task",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "{{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/tasks",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["tasks"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"学习 Go\",\n  \"desc\": \"完成 Todo 项目\",\n  \"deadline\": \"2025-12-31T23:59:59Z\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Tasks - Get All Tasks",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/tasks",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["tasks"]
+        }
+      }
+    },
+    {
+      "name": "Tasks - Update Task",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "{{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/tasks/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["tasks", "1"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"学习 Go（更新）\",\n  \"desc\": \"每天写代码 1h\",\n  \"deadline\": \"2025-12-20T23:59:59Z\",\n  \"done\": true\n}"
+        }
+      }
+    },
+    {
+      "name": "Tasks - Delete Task",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/tasks/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["tasks", "1"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "token",
+      "value": ""
+    }
+  ]
+}
