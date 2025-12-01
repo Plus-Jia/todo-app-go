@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/Plus-Jia/todo-app-go/controllers"
+	"github.com/Plus-Jia/todo-app-go/models"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -22,18 +23,20 @@ var db *gorm.DB
 var err error
 
 // 初始化数据库
-func initDatabase() {
-	// 打开数据库
-	db, err = gorm.Open("sqlite3", "todo-app.db")
-	if err != nil {
-		fmt.Println("数据库连接失败：", err)
-	}
-	// 自动迁移（创建表）
-	db.AutoMigrate(&User_test{})
-}
+//
+//	func initDatabase() {
+//		// 打开数据库
+//		db, err = gorm.Open("sqlite3", "todo-app.db")
+//		if err != nil {
+//			fmt.Println("数据库连接失败：", err)
+//		}
+//		// 自动迁移（创建表）
+//		db.AutoMigrate(&User_test{})
+//	}
 func main() {
 	// 初始化数据库连接
-	initDatabase()
+	models.InitDB()
+	defer models.DB.Close() // 程序退出时关闭连接
 
 	//创建 gin 路由
 	r := gin.Default()
@@ -46,9 +49,13 @@ func main() {
 	})
 
 	//功能路由，待完成---
-	r.POST("/api/register", controllers.Register)
+	r.POST("/register", controllers.Register)
 	r.POST("/login", controllers.Login)
 
+	// 中间件安全路由测试
+	r.GET("/protected", TokenAuthMiddleware(), func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "This is a protected route"})
+	})
 	// 启动 web 服务
 	r.Run(":8080")
 }

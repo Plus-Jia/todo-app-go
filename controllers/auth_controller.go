@@ -13,6 +13,7 @@ import (
 // 用户注册
 func Register(c *gin.Context) {
 	var user models.User
+	// 绑定JSON数据到User结构体
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -71,7 +72,7 @@ func Login(c *gin.Context) {
 		"exp":     time.Now().Add(24 * time.Hour).Unix(),
 	})
 
-	tokenString, err := token.SignedString(jwtKey)
+	tokenString, err := token.SignedString(jwtKey) //jwtkey 是上面声明了的秘钥
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not generate token"})
 		return
