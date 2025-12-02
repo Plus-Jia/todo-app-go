@@ -1,13 +1,8 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
-	"strings"
-
 	"github.com/Plus-Jia/todo-app-go/controllers"
 	"github.com/Plus-Jia/todo-app-go/models"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -45,48 +40,48 @@ func main() {
 	r.DELETE("/tasks/:id", controllers.DeleteTask)
 
 	// 中间件安全路由测试
-	r.GET("/protected", TokenAuthMiddleware(), func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "This is a protected route"})
-	})
+	// r.GET("/protected", TokenAuthMiddleware(), func(c *gin.Context) {
+	// 	c.JSON(http.StatusOK, gin.H{"message": "This is a protected route"})
+	// })
 	// 启动 web 服务
 	r.Run(":8080")
 }
 
-var jwtKey = []byte("your_secret_key")
+// var jwtKey = []byte("your_secret_key")
 
-// JWT 验证中间件
-func TokenAuthMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		tokenString := c.GetHeader("Authorization")
-		if tokenString == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Missing token"})
-			c.Abort()
-			return
-		}
+// // JWT 验证中间件
+// func TokenAuthMiddleware() gin.HandlerFunc {
+// 	return func(c *gin.Context) {
+// 		tokenString := c.GetHeader("Authorization")
+// 		if tokenString == "" {
+// 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Missing token"})
+// 			c.Abort()
+// 			return
+// 		}
 
-		// 去掉 "Bearer " 前缀
-		tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+// 		// 去掉 "Bearer " 前缀
+// 		tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 
-		// 解析 JWT
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			// 确保 JWT 的签名方法是我们期望的
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
-			}
-			return jwtKey, nil
-		})
+// 		// 解析 JWT
+// 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+// 			// 确保 JWT 的签名方法是我们期望的
+// 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+// 				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+// 			}
+// 			return jwtKey, nil
+// 		})
 
-		if err != nil || !token.Valid {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
-			c.Abort()
-			return
-		}
+// 		if err != nil || !token.Valid {
+// 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+// 			c.Abort()
+// 			return
+// 		}
 
-		// 将用户 ID 放入上下文
-		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			c.Set("user_id", claims["user_id"])
-		}
+// 		// 将用户 ID 放入上下文
+// 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+// 			c.Set("user_id", claims["user_id"])
+// 		}
 
-		c.Next()
-	}
-}
+// 		c.Next()
+// 	}
+// }
