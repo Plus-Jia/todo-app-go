@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/Plus-Jia/todo-app-go/models"
 	"github.com/dgrijalva/jwt-go"
@@ -17,6 +18,9 @@ func getUserIDFromToken(c *gin.Context) (uint, error) {
 	if tokenString == "" {
 		return 0, jwt.ErrSignatureInvalid
 	}
+
+	// 支持带 "Bearer " 前缀的 Authorization header，移除前缀并去除空白
+	tokenString = strings.TrimSpace(strings.TrimPrefix(tokenString, "Bearer "))
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return jwtKey, nil
