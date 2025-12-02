@@ -8,6 +8,7 @@ import (
 	"github.com/Plus-Jia/todo-app-go/controllers"
 	"github.com/Plus-Jia/todo-app-go/models"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -27,6 +28,15 @@ func main() {
 
 	//创建 gin 路由
 	r := gin.Default()
+
+	// 启用 CORS，允许 Vite 前端 (http://localhost:5173) 发起请求并处理预检
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:5173"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 
 	// ping 路由 测试用
 	r.GET("/ping", func(c *gin.Context) {
