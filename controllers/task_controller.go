@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/Plus-Jia/todo-app-go/models"
 	"github.com/dgrijalva/jwt-go"
@@ -56,6 +57,7 @@ func CreateTask(c *gin.Context) {
 
 	// 绑定用户
 	task.UserID = userID
+	task.CreatedAt = time.Now()
 
 	if err := models.DB.Create(&task).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create task"})
@@ -115,6 +117,7 @@ func UpdateTask(c *gin.Context) {
 	task.Desc = input.Desc
 	task.Done = input.Done
 	task.Deadline = input.Deadline
+	task.UpdatedAt = time.Now()
 
 	models.DB.Save(&task)
 

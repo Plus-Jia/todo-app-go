@@ -5,7 +5,6 @@ import (
 	"github.com/Plus-Jia/todo-app-go/models"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 // 定义一个用户结构体，用于数据库操作
@@ -13,9 +12,6 @@ type User_test struct {
 	ID    uint   `json:"id"`
 	Email string `json:"email"`
 }
-
-var db *gorm.DB
-var err error
 
 func main() {
 	// 初始化数据库连接

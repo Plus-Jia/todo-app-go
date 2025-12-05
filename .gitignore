@@ -31,5 +31,8 @@ go.work.sum
 # .idea/
 # .vscode/
 
+# 前端
+frontend/node_modules
 
-frontend/.gitignore
+# 数据库
+todo-app.db
