@@ -43,7 +43,7 @@ func Register(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "User registered successfully"})
 }
 
-// var jwtKey = []byte("your_secret_key")
+// var jwtKey = []byte("your_secret_key") // jwtKey在task_controller中被声明
 
 // 登录 API
 func Login(c *gin.Context) {
