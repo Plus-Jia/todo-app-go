@@ -18,5 +18,5 @@ func InitDB() {
 	db.AutoMigrate(&User{})
 	db.AutoMigrate(&Task{})
 
-	DB = db
+	DB = db.Debug()
 }

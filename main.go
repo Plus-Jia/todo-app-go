@@ -44,6 +44,7 @@ func main() {
 	r.GET("/tasks", controllers.GetTasks)
 	r.PUT("/tasks/:id", controllers.UpdateTask)
 	r.DELETE("/tasks/:id", controllers.DeleteTask)
+	r.GET("/advanced", controllers.GetTasksAdvanced)
 
 	// 中间件安全路由测试
 	// r.GET("/protected", TokenAuthMiddleware(), func(c *gin.Context) {

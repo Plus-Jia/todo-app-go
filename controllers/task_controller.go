@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -143,4 +144,77 @@ func DeleteTask(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Task deleted"})
+}
+
+// 高级任务列表：筛选、分页、排序
+func GetTasksAdvanced(c *gin.Context) {
+	userID, err := getUserIDFromToken(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
+
+	// 解析 query 参数
+	status := c.Query("status") // all / completed / pending
+	search := c.Query("search") // 搜索关键字
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("page_size", "10"))
+	sort := c.DefaultQuery("sort", "desc") // asc / desc
+
+	if page < 1 {
+		page = 1
+	}
+	if pageSize < 1 || pageSize > 100 {
+		pageSize = 10
+	}
+
+	// 构造查询
+	var tasks []models.Task
+	var total int64
+	query := models.DB.Where("user_id = ?", userID)
+
+	// 状态筛选
+	switch status {
+	case "completed":
+		query = query.Where("done = ?", true)
+	case "pending":
+		query = query.Where("done = ?", false)
+	}
+
+	// 搜索（标题 + 内容）
+	if search != "" {
+		like := "%" + search + "%"
+		query = query.Where("title LIKE ? OR desc LIKE ?", like, like)
+	}
+
+	// 获取总数（用于分页）
+	if err := query.Model(&models.Task{}).Count(&total).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Count failed"})
+		return
+	}
+
+	// 排序
+	if sort == "asc" {
+		query = query.Order("created_at asc")
+	} else {
+		query = query.Order("created_at desc")
+	}
+
+	// 分页
+	offset := (page - 1) * pageSize
+	query = query.Offset(offset).Limit(pageSize)
+
+	// 执行查询
+	if err := query.Find(&tasks).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Query failed"})
+		return
+	}
+
+	// 返回数据
+	c.JSON(http.StatusOK, gin.H{
+		"page":      page,
+		"page_size": pageSize,
+		"total":     total,
+		"tasks":     tasks,
+	})
 }
